@@ -14,7 +14,7 @@ def configure_routes(app):
         logger.info("Home endpoint called")
 
         session = get_db_session()
-        categories = session.query(Category).all()
+        categories = session.query(Category).options(joinedload(Category.activities)).all()
         session.close()
 
         return render_template('home.html', categories=categories)
@@ -62,6 +62,10 @@ def configure_routes(app):
 
         session = get_db_session()
         categories = session.query(Category).all()
+        category_id = request.args.get('category_id', type=int)
+        selected_category = None
+        if category_id:
+            selected_category = session.query(Category).filter_by(id=category_id).first()
         session.close()
 
         if request.method == 'POST':
@@ -87,11 +91,11 @@ def configure_routes(app):
 
             return redirect(url_for('home'))
 
-        return render_template('log_activity.html', categories=categories)
+        return render_template('log_activity.html', categories=categories, selected_category=selected_category)
 
     @app.route('/get_activities')
     def get_activities():
-        category_id = request.args.get('category_id')
+        category_id = request.args.get('category_id', type=int)
 
         session = get_db_session()
         activities = session.query(Activity).filter_by(category_id=category_id).all()
