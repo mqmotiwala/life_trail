@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Add Category and Activity</title>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Add Category and Activity</h1>
+        <form method="post" class="mt-4">
+            <div class="mb-3">
+                <label for="existing_category" class="form-label">Select Existing Category (Optional):</label>
+                <select name="existing_category" id="existing_category" class="form-select" onchange="toggleCategoryInput()">
+                    <option value="" selected>Select a category</option>
+                    {% for category in categories %}
+                    <option value="{{ category.name }}">{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="category_name" class="form-label">Or Enter New Category Name:</label>
+                <input type="text" class="form-control" id="category_name" name="category_name">
+            </div>
+            <div class="mb-3">
+                <label for="activity_name" class="form-label">Activity Name:</label>
+                <input type="text" class="form-control" id="activity_name" name="activity_name" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Add Category and Activity</button>
+        </form>
+        <div class="text-center mt-4">
+            <a href="/" class="btn btn-secondary w-100">Back to Home</a>
+        </div>
+    </div>
+
+    <script>
+        function toggleCategoryInput() {
+            const existingCategory = document.getElementById('existing_category').value;
+            const categoryInput = document.getElementById('category_name');
+            if (existingCategory) {
+                categoryInput.disabled = true;
+                categoryInput.value = "";
+            } else {
+                categoryInput.disabled = false;
+            }
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
