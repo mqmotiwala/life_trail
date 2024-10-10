@@ -25,9 +25,14 @@
                 </select>
             </div>
             <div class="mb-3">
+                <label for="timestamp" class="form-label">Custom Timestamp (Optional):</label>
+                <input type="datetime-local" class="form-control" id="timestamp" name="timestamp">
+            </div>
+            <div class="mb-3">
                 <label for="notes" class="form-label">Notes (Optional):</label>
                 <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
             </div>
+
             <button type="submit" class="btn btn-primary w-100 d-block mx-auto">Log Activity</button>
         </form>
         <div class="text-center mt-4">

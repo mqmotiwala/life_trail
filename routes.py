@@ -87,8 +87,16 @@ def configure_routes(app):
 
         if request.method == 'POST':
             activity_id = request.form['activity']
-            session = get_db_session()
+            timestamp_str = request.form.get('timestamp')
             notes = request.form.get('notes')
+
+            # Use the provided timestamp if available, otherwise use current time in preferred timezone
+            if timestamp_str:
+                timestamp = datetime.fromisoformat(timestamp_str)
+            else:
+                timestamp = datetime.now(ZoneInfo(PREFERRED_TIMEZONE))
+
+            session = get_db_session()
             activity = session.query(Activity).filter_by(id=activity_id).first()
             category = activity.category
             activity_log = ActivityLog(
@@ -97,7 +105,7 @@ def configure_routes(app):
                 category_id=category.id,
                 category_name=category.name,
                 notes=notes,
-                timestamp=datetime.now(ZoneInfo(PREFERRED_TIMEZONE))
+                timestamp=timestamp
             )
 
             session.add(activity_log)
