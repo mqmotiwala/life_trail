@@ -8,104 +8,100 @@
     <title>Life Trail - Your Activity Tracker</title>
     <style>
         body {
-            background-color: #f0f2f5;
+            background-color: #ffe5d9;
             font-family: 'Arial', sans-serif;
         }
-        .hero-section {
-            background: url('https://source.unsplash.com/1600x900/?nature') no-repeat center center;
-            background-size: cover;
-            padding: 120px 0;
-            color: #3a3a3a;
+        .category-section {
+            padding: 60px 0;
+            color: #5a2d0c;
             text-align: center;
-            position: relative;
-            background-color: #f5f5f5;
         }
-        .hero-section::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.6);
-        }
-        .hero-section .container {
+        .category-section .container {
             position: relative;
             z-index: 1;
         }
-        .category-section {
-            background-color: #e9ecef;
+        .action-section {
+            background-color: #ffe5d9;
             padding: 60px 0;
-            color: #3a3a3a;
+            color: #343a40;
+        }
+        .action-card {
+            border-radius: 10px;
+            transition: all 0.3s ease-in-out;
+            text-align: center;
+            max-width: 400px;
+            margin: 10px auto;
+        }
+        .action-card:hover {
+            transform: scale(1.05);
         }
         .category-card {
             border-radius: 10px;
+            transition: all 0.3s ease-in-out;
+            text-align: center;
+            max-width: 300px;
+            margin: 0 auto;
         }
         .category-card:hover {
-            transform: scale(1.05);
-            transition: all 0.3s ease-in-out;
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
         }
         .category-card .card-body {
             text-align: center;
-        }
-        .category-card .badge {
-            font-size: 0.8rem;
-            background-color: #007bff;
-            color: white;
-            margin-bottom: 10px;
         }
         .empty-message {
             font-style: italic;
             color: #6c757d;
         }
-        .analytics-section {
-            background-color: #f8f9fa;
-            padding: 60px 0;
-            color: #3a3a3a;
-            text-align: center;
-        }
         footer {
-            background-color: #e9ecef;
+            background-color: #ffe5d9;
             padding: 20px 0;
-            color: #3a3a3a;
+            color: #5a2d0c;
+        }
+        .btn-unified {
+            background-color: #0D6EFD;
+            color: white;
+            border: none;
+        }
+        .btn-unified:hover {
+            background-color: #0A58CA;
+            color: white;
         }
     </style>
 </head>
 <body>
-    <header class="hero-section">
+    <section class="hero-section" style="padding: 100px 0; background-color: #ffe5d9; text-align: center;">
         <div class="container">
-            <h1 class="display-4">Welcome to Life Trail</h1>
-            <p class="lead">Track your journey, log your activities, and make each day count!</p>
-            <a href="/add_category_activity" class="btn btn-dark btn-lg mt-3"><i class="fas fa-plus-circle"></i> Add New Activity</a>
+            <h1 class="display-1 fw-bold">Welcome to Life Trail</h1>
+            <p class="lead">A platform to track your activities!</p>
         </div>
-    </header>
+    </section>
 
     <section class="category-section">
         <div class="container">
-            <div class="text-center mb-4">
-                <h2>Your Categories</h2>
-                <p>Explore the activities you've been logging and keep track of your growth.</p>
-            </div>
+            <h2 class="display-5">Your Categories</h2>
+            <p>Explore the activities you've been logging and keep track of your growth.</p>
 
             <div class="row justify-content-center">
                 {% for category in categories %}
-                <div class="col-lg-4 col-md-6 mb-4">
+                <div class="col-lg-4 col-md-5 mb-4">
                     <div class="card category-card shadow-sm">
                         <div class="card-body">
-                            <span class="badge">{{ category.activities|length }} Activities</span>
                             <h5 class="card-title">{{ category.name }}</h5>
-                            <p class="card-text">Activities in this category:</p>
+                            <p>{{ category.activities | length }} {{ 'Activity' if category.activities | length == 1 else 'Activities' }}</p>
                             <ul class="list-group list-group-flush">
-                                {% set activities = category.activities if category.activities else [] %}
-                                {% if activities|length > 0 %}
-                                    {% for activity in activities %}
-                                    <li class="list-group-item">{{ activity.name }}</li>
+                                {% if category.activities | length > 0 %}
+                                    {% for activity in category.activities %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <span>{{ activity.name }}</span>
+                                        <span>{{ activity.instance_count }} {{ 'instance' if activity.instance_count == 1 else 'instances' }}</span>
+                                    </li>
                                     {% endfor %}
                                 {% else %}
                                     <li class="list-group-item empty-message">No activities logged yet. Add one now!</li>
                                 {% endif %}
                             </ul>
-                            <a href="/log_activity?category_id={{ category.id }}" class="btn btn-primary mt-3"><i class="fas fa-pencil-alt"></i> Log Activity</a>
+                            <a href="/log_activity?category_id={{ category.id }}" class="btn btn-unified mt-3"><i class="fas fa-pencil-alt"></i> Log Activity</a>
                         </div>
                     </div>
                 </div>
@@ -114,15 +110,32 @@
         </div>
     </section>
 
-    <section class="analytics-section mb-0">
+    <section class="action-section">
         <div class="container">
-            <h2>View Analytics</h2>
-            <p>Analyze your activity trends and gain insights into your progress.</p>
-            <a href="/analytics" class="btn btn-outline-dark btn-lg mt-3"><i class="fas fa-chart-line"></i> View Analytics</a>
+            <div class="row justify-content-between align-items-stretch">
+                <div class="col-md-5 col-sm-6 d-flex align-items-stretch">
+                    <div class="card action-card shadow-sm">
+                        <div class="card-body">
+                            <h3 class="card-title">Add New Categories or Activities</h3>
+                            <p>Create new categories or activities to track your journey.</p>
+                            <a href="/add_category_activity" class="btn btn-unified btn-lg mt-2"><i class="fas fa-plus-circle"></i> Add New Activity</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card action-card shadow-sm">
+                        <div class="card-body">
+                            <h3 class="card-title">View Analytics</h3>
+                            <p>Analyze your activity trends and gain insights into your progress.</p>
+                            <a href="/analytics" class="btn btn-unified btn-lg mt-3"><i class="fas fa-chart-line"></i> View Analytics</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
-    <footer class="text-center mt-5">
+    <footer class="text-center mt-5" style="background-color: #ffe5d9;">
         <div class="container">
             <p>&copy; 2024 Life Trail. Made with ❤️ in Palo Alto.</p>
         </div>

@@ -12,9 +12,9 @@
             <div class="mb-3">
                 <label for="category" class="form-label">Select Category:</label>
                 <select name="category" id="category" class="form-select" onchange="fetchActivities(this.value)">
-                    <option value="" disabled selected>Select a category</option>
+                    <option value="" disabled {% if not selected_category %}selected{% endif %}>Select a category</option>
                     {% for category in categories %}
-                    <option value="{{ category.id }}">{{ category.name }}</option>
+                    <option value="{{ category.id }}" {% if selected_category and selected_category.id == category.id %}selected{% endif %}>{{ category.name }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -36,6 +36,13 @@
     </div>
 
     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const selectedCategory = document.getElementById('category').value;
+            if (selectedCategory) {
+                fetchActivities(selectedCategory);
+            }
+        });
+
         async function fetchActivities(categoryId) {
             const activitySelect = document.getElementById('activity');
             activitySelect.innerHTML = '<option value="" disabled selected>Loading activities...</option>';

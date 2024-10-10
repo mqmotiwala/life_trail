@@ -15,9 +15,26 @@ def configure_routes(app):
 
         session = get_db_session()
         categories = session.query(Category).options(joinedload(Category.activities)).all()
-        session.close()
 
-        return render_template('home.html', categories=categories)
+        # Pre-calculate instance count for each activity and store it in a dictionary
+        category_data = []
+        for category in categories:
+            activities_data = []
+            for activity in category.activities:
+                instance_count = session.query(ActivityLog).filter_by(activity_id=activity.id).count()
+                activities_data.append({
+                    'id': activity.id,
+                    'name': activity.name,
+                    'instance_count': instance_count
+                })
+            category_data.append({
+                'id': category.id,
+                'name': category.name,
+                'activities': activities_data
+            })
+
+        session.close()
+        return render_template('home.html', categories=category_data)
 
     @app.route('/add_category_activity', methods=['GET', 'POST'])
     def add_category_activity():
