@@ -8,63 +8,42 @@
     <title>Life Trail - Your Activity Tracker</title>
     <style>
         body {
-            background-color: #ffe5d9;
             font-family: 'Arial', sans-serif;
         }
-        .category-section {
-            padding: 60px 0;
-            color: #5a2d0c;
+        .hero-section {
+            padding: 100px 0;
             text-align: center;
         }
-        .category-section .container {
-            position: relative;
-            z-index: 1;
-        }
         .action-section {
-            background-color: #ffe5d9;
             padding: 60px 0;
-            color: #343a40;
         }
         .action-card {
             border-radius: 10px;
             transition: all 0.3s ease-in-out;
             text-align: center;
-            max-width: 400px;
-            margin: 10px auto;
-        }
-        .action-card:hover {
-            transform: scale(1.05);
+            border: 1px solid #e0e0e0;
+            padding: 20px;
         }
         .category-card {
             border-radius: 10px;
             transition: all 0.3s ease-in-out;
             text-align: center;
-            max-width: 300px;
-            margin: 0 auto;
+            border: 1px solid #e0e0e0;
+            padding: 20px;
         }
-        .category-card:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-        }
-        .category-card .card-body {
-            text-align: center;
-        }
-        .empty-message {
-            font-style: italic;
-            color: #6c757d;
+        .category-card:hover, .action-card:hover {
+            transform: scale(1.05);
         }
         footer {
-            background-color: #ffe5d9;
             padding: 20px 0;
-            color: #5a2d0c;
         }
         .btn-unified {
-            background-color: #0D6EFD;
+            background-color: #6c757d;
             color: white;
             border: none;
         }
         .btn-unified:hover {
-            background-color: #0A58CA;
+            background-color: #5a6268;
             color: white;
         }
     </style>
@@ -99,26 +78,44 @@
         </div>
     </nav>
 
-    <section class="hero-section" style="padding: 100px 0; background-color: #ffe5d9; text-align: center;">
+    <section class="hero-section">
         <div class="container">
             <h1 class="display-1 fw-bold">Welcome to Life Trail, {{ user.first_name }}</h1>
-            <p class="lead">A platform to track your activities!</p>
+            <p class="lead">A platform to track your activities.</p>
         </div>
     </section>
 
-    <section class="category-section">
+    <section class="action-section">
         <div class="container">
-            <h2 class="display-5">Your Categories</h2>
-            <p>Explore the activities you've been logging and keep track of your growth.</p>
+            <div class="row justify-content-center mb-5">
+                <!-- Add New Categories or Activities -->
+                <div class="col-md-3">
+                    <div class="action-card h-100 d-flex flex-column justify-content-between">
+                        <h3>Create Categories</h3>
+                        <p>Add things you want to track.</p>
+                        <a href="/add_category_activity" class="btn btn-unified btn-lg mt-3"><i class="fas fa-plus-circle"></i> Add New Activity</a>
+                    </div>
+                </div>
+
+                <!-- View Analytics -->
+                <div class="col-md-3">
+                    <div class="action-card h-100 d-flex flex-column justify-content-between">
+                        <h3>View Analytics</h3>
+                        <p>Explore your logged activities.</p>
+                        <a href="/analytics" class="btn btn-unified btn-lg mt-3"><i class="fas fa-chart-line"></i> View Analytics</a>
+                    </div>
+                </div>
+            </div>
 
             <div class="row justify-content-center">
-                {% if categories %}
-                    {% for category in categories %}
-                    <div class="col-lg-4 col-md-5 mb-4">
-                        <div class="card category-card shadow-sm">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ category.name }}</h5>
-                                <p>{{ category.activities | length }} {{ 'Activity' if category.activities | length == 1 else 'Activities' }}</p>
+                <div class="col-md-6">
+                    <div class="category-card">
+                        <h3>Log Activity</h3>
+                        <p>Make an entry to one of your categories.</p>
+                        {% if categories %}
+                            {% for category in categories %}
+                            <div class="category-log-section mb-4 p-3" style="border-top: 4px solid #000;">
+                                <h5>{{ category.name }}</h5>
                                 <ul class="list-group list-group-flush">
                                     {% if category.activities | length > 0 %}
                                         {% for activity in category.activities %}
@@ -133,42 +130,17 @@
                                 </ul>
                                 <a href="/log_activity?category_id={{ category.id }}" class="btn btn-unified mt-3"><i class="fas fa-pencil-alt"></i> Log Activity</a>
                             </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                {% else %}
-                    <p class="empty-message">You have no categories yet. Start by adding a new category and activity!</p>
-                {% endif %}
-            </div>
-        </div>
-    </section>
-
-    <section class="action-section">
-        <div class="container">
-            <div class="row justify-content-between align-items-stretch">
-                <div class="col-md-5 col-sm-6 d-flex align-items-stretch">
-                    <div class="card action-card shadow-sm">
-                        <div class="card-body">
-                            <h3 class="card-title">Add New Categories or Activities</h3>
-                            <p>Create new categories or activities to track your journey.</p>
-                            <a href="/add_category_activity" class="btn btn-unified btn-lg mt-2"><i class="fas fa-plus-circle"></i> Add New Activity</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="card action-card shadow-sm">
-                        <div class="card-body">
-                            <h3 class="card-title">View Analytics</h3>
-                            <p>Analyze your activity trends and gain insights into your progress.</p>
-                            <a href="/analytics" class="btn btn-unified btn-lg mt-3"><i class="fas fa-chart-line"></i> View Analytics</a>
-                        </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="empty-message">You have no categories yet. Start by adding a new category and activity!</p>
+                        {% endif %}
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <footer class="text-center mt-5" style="background-color: #ffe5d9;">
+    <footer class="text-center mt-5">
         <div class="container">
             <p>&copy; 2024 Life Trail. Made with ❤️ in Palo Alto.</p>
         </div>
