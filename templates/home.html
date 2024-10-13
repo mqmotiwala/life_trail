@@ -70,9 +70,38 @@
     </style>
 </head>
 <body>
+    <!-- Navbar with login/logout -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Life Trail</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    {% if session['user_id'] %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Welcome, {{ user.first_name }}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('register') }}">Register</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
     <section class="hero-section" style="padding: 100px 0; background-color: #ffe5d9; text-align: center;">
         <div class="container">
-            <h1 class="display-1 fw-bold">Welcome to Life Trail</h1>
+            <h1 class="display-1 fw-bold">Welcome to Life Trail, {{ user.first_name }}</h1>
             <p class="lead">A platform to track your activities!</p>
         </div>
     </section>
@@ -83,29 +112,33 @@
             <p>Explore the activities you've been logging and keep track of your growth.</p>
 
             <div class="row justify-content-center">
-                {% for category in categories %}
-                <div class="col-lg-4 col-md-5 mb-4">
-                    <div class="card category-card shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ category.name }}</h5>
-                            <p>{{ category.activities | length }} {{ 'Activity' if category.activities | length == 1 else 'Activities' }}</p>
-                            <ul class="list-group list-group-flush">
-                                {% if category.activities | length > 0 %}
-                                    {% for activity in category.activities %}
-                                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        <span>{{ activity.name }}</span>
-                                        <span>{{ activity.instance_count }} {{ 'instance' if activity.instance_count == 1 else 'instances' }}</span>
-                                    </li>
-                                    {% endfor %}
-                                {% else %}
-                                    <li class="list-group-item empty-message">No activities logged yet. Add one now!</li>
-                                {% endif %}
-                            </ul>
-                            <a href="/log_activity?category_id={{ category.id }}" class="btn btn-unified mt-3"><i class="fas fa-pencil-alt"></i> Log Activity</a>
+                {% if categories %}
+                    {% for category in categories %}
+                    <div class="col-lg-4 col-md-5 mb-4">
+                        <div class="card category-card shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ category.name }}</h5>
+                                <p>{{ category.activities | length }} {{ 'Activity' if category.activities | length == 1 else 'Activities' }}</p>
+                                <ul class="list-group list-group-flush">
+                                    {% if category.activities | length > 0 %}
+                                        {% for activity in category.activities %}
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <span>{{ activity.name }}</span>
+                                            <span>{{ activity.instance_count }} {{ 'instance' if activity.instance_count == 1 else 'instances' }}</span>
+                                        </li>
+                                        {% endfor %}
+                                    {% else %}
+                                        <li class="list-group-item empty-message">No activities logged yet. Add one now!</li>
+                                    {% endif %}
+                                </ul>
+                                <a href="/log_activity?category_id={{ category.id }}" class="btn btn-unified mt-3"><i class="fas fa-pencil-alt"></i> Log Activity</a>
+                            </div>
                         </div>
                     </div>
-                </div>
-                {% endfor %}
+                    {% endfor %}
+                {% else %}
+                    <p class="empty-message">You have no categories yet. Start by adding a new category and activity!</p>
+                {% endif %}
             </div>
         </div>
     </section>
