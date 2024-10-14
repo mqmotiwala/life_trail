@@ -11,11 +11,11 @@
             font-family: 'Arial', sans-serif;
         }
         .hero-section {
-            padding: 100px 0;
+            padding: 25px 0;
             text-align: center;
         }
         .action-section {
-            padding: 60px 0;
+            padding: 25px 0;
         }
         .action-card {
             border-radius: 10px;
@@ -37,51 +37,30 @@
         footer {
             padding: 20px 0;
         }
-        .btn-unified {
-            background-color: #6c757d;
+        .btn-unified, .btn-secondary {
+            background-color: #385e3c;
             color: white;
             border: none;
         }
-        .btn-unified:hover {
-            background-color: #5a6268;
+        .btn-unified:hover, .btn-secondary:hover {
+            background-color: #263b2b;
             color: white;
         }
     </style>
 </head>
 <body>
     <!-- Navbar with login/logout -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/">Life Trail</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    {% if session['user_id'] %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Welcome, {{ user.first_name }}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
-                    </li>
-                    {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('login') }}">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('register') }}">Register</a>
-                    </li>
-                    {% endif %}
-                </ul>
-            </div>
+    <div class="container-fluid mt-3">
+        {% if session['user_id'] %}
+        <div class="d-flex justify-content-end">
+            <a href="{{ url_for('logout') }}" class="btn btn-secondary">Logout</a>
         </div>
-    </nav>
+        {% endif %}
+    </div>
 
     <section class="hero-section">
         <div class="container">
-            <h1 class="display-1 fw-bold">Welcome to Life Trail, {{ user.first_name }}</h1>
-            <p class="lead">A platform to track your activities.</p>
+            <h3 class="display-4 fw-bold">Welcome to Your Life Trail, {{ user.first_name }}</h3>
         </div>
     </section>
 
@@ -92,7 +71,7 @@
                 <div class="col-md-3">
                     <div class="action-card h-100 d-flex flex-column justify-content-between">
                         <h3>Create Categories</h3>
-                        <p>Add things you want to track.</p>
+                        <p>Define what you want to track.</p>
                         <a href="/add_category_activity" class="btn btn-unified btn-lg mt-3"><i class="fas fa-plus-circle"></i> Add New Activity</a>
                     </div>
                 </div>
@@ -111,7 +90,7 @@
                 <div class="col-md-6">
                     <div class="category-card">
                         <h3>Log Activity</h3>
-                        <p>Make an entry to one of your categories.</p>
+                        <p>Make an entry for one of your activities.</p>
                         {% if categories %}
                             {% for category in categories %}
                             <div class="category-log-section mb-4 p-3" style="border-top: 4px solid #000;">
