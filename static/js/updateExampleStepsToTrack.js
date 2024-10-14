@@ -22,7 +22,7 @@ const STEPS = [
 ];
 
 document.addEventListener("DOMContentLoaded", function() {
-    const dynamicTextElement = document.getElementById("trackable_steps");
+    const dynamicTextElement = document.getElementById("exampleStepsToTrack");
 
     function updateText() {
         // Fade out the current text
