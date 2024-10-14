@@ -50,6 +50,7 @@ def configure_routes(app):
     def login():
         logger.info("Login endpoint called")
         session_db = get_db_session()
+        error_message = None
         if request.method == 'POST':
             username = request.form['username']
             password = request.form['password']
@@ -60,10 +61,10 @@ def configure_routes(app):
                 flash('Login successful!', 'success')
                 return redirect(url_for('home'))
             else:
-                flash('Invalid username or password!', 'danger')
+                error_message = 'Invalid username or password!'
 
         session_db.close()
-        return render_template('login.html')
+        return render_template('login.html', error_message=error_message)
 
     @app.route('/logout')
     def logout():

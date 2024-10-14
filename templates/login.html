@@ -12,6 +12,11 @@
     </section>
 
     <!-- Login Form -->
+    {% if error_message %}
+    <div class="alert alert-danger text-center" role="alert">
+        {{ error_message }}
+    </div>
+    {% endif %}
     <form method="post" class="mt-2">
         <div class="mb-3">
             <label for="username" class="form-label">Username:</label>
