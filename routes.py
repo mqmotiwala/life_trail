@@ -19,6 +19,15 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+# Helper function to get the current user
+def get_current_user():
+    if 'user_id' in session:
+        session_db = get_db_session()
+        user = session_db.query(User).filter_by(id=session['user_id']).first()
+        session_db.close()
+        return user
+    return None
+
 def configure_routes(app):
     @app.route('/register', methods=['GET', 'POST'])
     def register():
@@ -77,14 +86,10 @@ def configure_routes(app):
     @login_required
     def home():
         logger.info("Home endpoint called")
+        user = get_current_user()
 
         session_db = get_db_session()
-        user_id = session['user_id']
-
-        # Retrieve the logged-in user
-        user = session_db.query(User).filter_by(id=user_id).first()
-
-        categories = session_db.query(Category).filter_by(user_id=user_id).options(joinedload(Category.activities)).all()
+        categories = session_db.query(Category).filter_by(user_id=user.id).options(joinedload(Category.activities)).all()
 
         # Pre-calculate instance count for each activity and store it in a dictionary
         category_data = []
@@ -110,25 +115,21 @@ def configure_routes(app):
     @login_required
     def add_activity():
         logger.info("Add activity endpoint called")
+        user = get_current_user()
 
         session_db = get_db_session()
-        user_id = session['user_id']
-
-        # Retrieve the logged-in user
-        user = session_db.query(User).filter_by(id=user_id).first()
-
-        categories = session_db.query(Category).filter_by(user_id=user_id).all()
+        categories = session_db.query(Category).filter_by(user_id=user.id).all()
         if request.method == 'POST':
             existing_category_name = request.form.get('existing_category')
             category_name = request.form.get('category_name')
             category_name = existing_category_name if existing_category_name else category_name
             activity_name = request.form['activity_name']
-            existing_category = session_db.query(Category).filter_by(name=category_name, user_id=user_id).first()
+            existing_category = session_db.query(Category).filter_by(name=category_name, user_id=user.id).first()
 
             if existing_category:
                 new_category = existing_category
             else:
-                new_category = Category(name=category_name, user_id=user_id)
+                new_category = Category(name=category_name, user_id=user.id)
                 session_db.add(new_category)
                 session_db.commit()
 
@@ -137,7 +138,7 @@ def configure_routes(app):
             if existing_activity:
                 raise ValueError(f"Activity '{activity_name}' already exists in category '{new_category.name}'")
 
-            new_activity = Activity(name=activity_name, category_id=new_category.id, user_id=user_id)
+            new_activity = Activity(name=activity_name, category_id=new_category.id, user_id=user.id)
 
             session_db.add(new_activity)
             session_db.commit()
@@ -153,18 +154,14 @@ def configure_routes(app):
     @login_required
     def log_activity():
         logger.info("Log activity endpoint called")
+        user = get_current_user()
 
         session_db = get_db_session()
-        user_id = session['user_id']
-
-        # Retrieve the logged-in user
-        user = session_db.query(User).filter_by(id=user_id).first()
-
-        categories = session_db.query(Category).filter_by(user_id=user_id).all()
+        categories = session_db.query(Category).filter_by(user_id=user.id).all()
         category_id = request.args.get('category_id', type=int)
         selected_category = None
         if category_id:
-            selected_category = session_db.query(Category).filter_by(id=category_id, user_id=user_id).first()
+            selected_category = session_db.query(Category).filter_by(id=category_id, user_id=user.id).first()
         session_db.close()
 
         if request.method == 'POST':
@@ -179,7 +176,7 @@ def configure_routes(app):
                 timestamp = datetime.now(ZoneInfo(PREFERRED_TIMEZONE))
 
             session_db = get_db_session()
-            activity = session_db.query(Activity).filter_by(id=activity_id, user_id=user_id).first()
+            activity = session_db.query(Activity).filter_by(id=activity_id, user_id=user.id).first()
             if not activity:
                 flash('Activity not found.', 'danger')
                 return redirect(url_for('log_activity'))
@@ -189,7 +186,7 @@ def configure_routes(app):
                 activity_name=activity.name,
                 category_id=category.id,
                 category_name=category.name,
-                user_id=user_id,
+                user_id=user.id,
                 notes=notes,
                 timestamp=timestamp
             )
@@ -208,14 +205,10 @@ def configure_routes(app):
     @login_required
     def get_activities():
         category_id = request.args.get('category_id', type=int)
-        user_id = session['user_id']
+        user = get_current_user()
 
         session_db = get_db_session()
-
-        # Retrieve the logged-in user
-        user = session_db.query(User).filter_by(id=user_id).first()
-
-        activities = session_db.query(Activity).filter_by(category_id=category_id, user_id=user_id).all()
+        activities = session_db.query(Activity).filter_by(category_id=category_id, user_id=user.id).all()
         session_db.close()
 
         return jsonify([{'id': activity.id, 'name': activity.name} for activity in activities])
@@ -224,22 +217,18 @@ def configure_routes(app):
     @login_required
     def analytics():
         logger.info("Analytics endpoint called")
+        user = get_current_user()
 
         session_db = get_db_session()
-        user_id = session['user_id']
-
-        # Retrieve the logged-in user
-        user = session_db.query(User).filter_by(id=user_id).first()
-
-        categories = session_db.query(Category).filter_by(user_id=user_id).all()
+        categories = session_db.query(Category).filter_by(user_id=user.id).all()
         activities = []
         results = []
 
         if request.method == 'POST':
             category_id = request.form['category']
             activity_id = request.form.get('activity')
-            activities = session_db.query(Activity).filter_by(category_id=category_id, user_id=user_id).all()
-            query = session_db.query(ActivityLog).join(Activity).filter(Activity.category_id == category_id, Activity.user_id == user_id).options(joinedload(ActivityLog.activity))
+            activities = session_db.query(Activity).filter_by(category_id=category_id, user_id=user.id).all()
+            query = session_db.query(ActivityLog).join(Activity).filter(Activity.category_id == category_id, Activity.user_id == user.id).options(joinedload(ActivityLog.activity))
 
             if activity_id:
                 query = query.filter(ActivityLog.activity_id == activity_id)
