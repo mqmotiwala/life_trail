@@ -7,7 +7,8 @@
     <section class="hero-section">
         <div class="container">
             <h1 class="display-1 fw-bold text-primary">Welcome to Life Trail!</h1>
-            <p class="lead text-start">A platform to track your activities.</p>
+            <p class="lead text-start">A platform to track the things that matter to you.</p>
+            <p class="subtitle text-start" id="trackable_steps"></p>
         </div>
     </section>
 
@@ -32,4 +33,7 @@
         </div>
     </form>
 </div>
+
+<script src="{{ url_for('static', filename='js/trackable_steps.js') }}"></script>
+
 {% endblock %}
