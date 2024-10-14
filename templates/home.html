@@ -1,134 +1,71 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <title>Life Trail - Your Activity Tracker</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-        }
-        .hero-section {
-            padding: 25px 0;
-            text-align: center;
-        }
-        .action-section {
-            padding: 25px 0;
-        }
-        .action-card {
-            border-radius: 10px;
-            transition: all 0.3s ease-in-out;
-            text-align: center;
-            border: 1px solid #e0e0e0;
-            padding: 20px;
-        }
-        .category-card {
-            border-radius: 10px;
-            transition: all 0.3s ease-in-out;
-            text-align: center;
-            border: 1px solid #e0e0e0;
-            padding: 20px;
-        }
-        .category-card:hover, .action-card:hover {
-            transform: scale(1.05);
-        }
-        footer {
-            padding: 20px 0;
-        }
-        .btn-unified, .btn-secondary {
-            background-color: #385e3c;
-            color: white;
-            border: none;
-        }
-        .btn-unified:hover, .btn-secondary:hover {
-            background-color: #263b2b;
-            color: white;
-        }
-    </style>
-</head>
-<body>
-    <!-- Navbar with login/logout -->
-    <div class="container-fluid mt-3">
-        {% if session['user_id'] %}
-        <div class="d-flex justify-content-end">
-            <a href="{{ url_for('logout') }}" class="btn btn-secondary">Logout</a>
+{% extends "base.html" %}
+
+{% block title %}Life Trail - Your Activity Tracker{% endblock %}
+
+{% block content %}
+
+<section class="hero-section">
+    <div class="container">
+        <h3 class="display-4 fw-bold">Welcome to Your Life Trail, {{ user.first_name }}</h3>
+    </div>
+</section>
+
+<section class="action-section">
+    <div class="container">
+        {% if not categories %}
+        <p class="lead text-center">You're not tracking anything. Start below.</p>
+        {% endif %}
+
+        <div class="row justify-content-center mb-5">
+            <!-- Add New Categories or Activities -->
+            <div class="col-md-3">
+                <div class="action-card h-100 d-flex flex-column justify-content-between">
+                    <h3>Create Activity</h3>
+                    <p>Define what you want to track.</p>
+                    <a href="/add_category_activity" class="btn btn-unified btn-lg mt-3"><i class="fas fa-plus-circle"></i> Add New</a>
+                </div>
+            </div>
+
+            <!-- View Analytics -->
+            {% if categories %}
+            <div class="col-md-3">
+                <div class="action-card h-100 d-flex flex-column justify-content-between">
+                    <h3>View Analytics</h3>
+                    <p>Explore your logged activities.</p>
+                    <a href="/analytics" class="btn btn-unified btn-lg mt-3"><i class="fas fa-chart-line"></i> View Analytics</a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        {% if categories %}
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="category-card">
+                    <h3>Add to Life Trail</h3>
+                    <p>Make an entry for one of your activities.</p>
+                    {% for category in categories %}
+                    <div class="category-log-section mb-4 p-3" style="border-top: 4px solid #000;">
+                        <h5>{{ category.name }}</h5>
+                        <ul class="list-group list-group-flush">
+                            {% if category.activities | length > 0 %}
+                                {% for activity in category.activities %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>{{ activity.name }}</span>
+                                    <span>{{ activity.instance_count }} {{ 'instance' if activity.instance_count == 1 else 'instances' }}</span>
+                                </li>
+                                {% endfor %}
+                            {% else %}
+                                <li class="list-group-item empty-message">No activities logged yet. Add one now!</li>
+                            {% endif %}
+                        </ul>
+                        <a href="/log_activity?category_id={{ category.id }}" class="btn btn-unified mt-3"><i class="fas fa-pencil-alt"></i> Log Activity</a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
         {% endif %}
     </div>
-
-    <section class="hero-section">
-        <div class="container">
-            <h3 class="display-4 fw-bold">Welcome to Your Life Trail, {{ user.first_name }}</h3>
-        </div>
-    </section>
-
-    <section class="action-section">
-        <div class="container">
-            <div class="row justify-content-center mb-5">
-                <!-- Add New Categories or Activities -->
-                <div class="col-md-3">
-                    <div class="action-card h-100 d-flex flex-column justify-content-between">
-                        <h3>Create Categories</h3>
-                        <p>Define what you want to track.</p>
-                        <a href="/add_category_activity" class="btn btn-unified btn-lg mt-3"><i class="fas fa-plus-circle"></i> Add New Activity</a>
-                    </div>
-                </div>
-
-                <!-- View Analytics -->
-                <div class="col-md-3">
-                    <div class="action-card h-100 d-flex flex-column justify-content-between">
-                        <h3>View Analytics</h3>
-                        <p>Explore your logged activities.</p>
-                        <a href="/analytics" class="btn btn-unified btn-lg mt-3"><i class="fas fa-chart-line"></i> View Analytics</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row justify-content-center">
-                <div class="col-md-6">
-                    <div class="category-card">
-                        <h3>Log Activity</h3>
-                        <p>Make an entry for one of your activities.</p>
-                        {% if categories %}
-                            {% for category in categories %}
-                            <div class="category-log-section mb-4 p-3" style="border-top: 4px solid #000;">
-                                <h5>{{ category.name }}</h5>
-                                <ul class="list-group list-group-flush">
-                                    {% if category.activities | length > 0 %}
-                                        {% for activity in category.activities %}
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            <span>{{ activity.name }}</span>
-                                            <span>{{ activity.instance_count }} {{ 'instance' if activity.instance_count == 1 else 'instances' }}</span>
-                                        </li>
-                                        {% endfor %}
-                                    {% else %}
-                                        <li class="list-group-item empty-message">No activities logged yet. Add one now!</li>
-                                    {% endif %}
-                                </ul>
-                                <a href="/log_activity?category_id={{ category.id }}" class="btn btn-unified mt-3"><i class="fas fa-pencil-alt"></i> Log Activity</a>
-                            </div>
-                            {% endfor %}
-                        {% else %}
-                            <p class="empty-message">You have no categories yet. Start by adding a new category and activity!</p>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <footer class="text-center mt-5">
-        <div class="container">
-            <p>&copy; 2024 Life Trail. Made with ❤️ in Palo Alto.</p>
-        </div>
-        <div class="container mt-3">
-            <a href="https://www.linkedin.com/in/mufaddalmotiwala" class="me-3" target="_blank"><i class="fab fa-linkedin fa-lg"></i></a>
-            <a href="https://www.github.com/mqmotiwala/life_trail" class="me-3" target="_blank"><i class="fab fa-github fa-lg"></i></a>
-        </div>
-    </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+</section>
+{% endblock %}
