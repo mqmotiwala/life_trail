@@ -4,10 +4,10 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h1 class="text-center">Log Activity</h1>
+    <h1 class="display-4 text-center">Log Activity</h1>
     <form method="post" class="mt-4">
         <div class="mb-3">
-            <label for="category" class="form-label">Select Category:</label>
+            <label for="category" class="lead">Select Category:</label>
             <select name="category" id="category" class="form-select" onchange="fetchActivities(this.value)">
                 <option value="" disabled {% if not selected_category %}selected{% endif %}>Select a category</option>
                 {% for category in categories %}
@@ -16,25 +16,26 @@
             </select>
         </div>
         <div class="mb-3">
-            <label for="activity" class="form-label">Select Activity:</label>
+            <label for="activity" class="lead">Select Activity:</label>
             <select name="activity" id="activity" class="form-select" disabled>
                 <option value="" disabled selected>Select a category first</option>
             </select>
         </div>
         <div class="mb-3">
-            <label for="timestamp" class="form-label">Custom Timestamp (Optional):</label>
+            <label for="timestamp" class="lead">Custom Timestamp</label>
+            <p class="text">This is optional.</label>
             <input type="datetime-local" class="form-control" id="timestamp" name="timestamp">
         </div>
         <div class="mb-3">
-            <label for="notes" class="form-label">Notes (Optional):</label>
+            <label for="notes" class="lead">Notes</label>
+            <p class="text">This is optional.</label>
             <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
         </div>
-
-        <button type="submit" class="btn btn-primary w-100 d-block mx-auto">Log Activity</button>
+        <div class="d-flex justify-content-center gap-1">
+            <button type="submit" class="btn btn-primary">Log Activity</button>
+            <a href="/" class="btn btn-secondary">Back to Home</a>
+        </div>
     </form>
-    <div class="text-center mt-4">
-        <a href="/" class="btn btn-secondary w-100">Back to Home</a>
-    </div>
 </div>
 
 <script>

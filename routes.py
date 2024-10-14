@@ -106,10 +106,10 @@ def configure_routes(app):
         session_db.close()
         return render_template('home.html', categories=category_data, user=user)
 
-    @app.route('/add_category_activity', methods=['GET', 'POST'])
+    @app.route('/add_activity', methods=['GET', 'POST'])
     @login_required
-    def add_category_activity():
-        logger.info("Add category and activity endpoint called")
+    def add_activity():
+        logger.info("Add activity endpoint called")
 
         session_db = get_db_session()
         user_id = session['user_id']
@@ -147,7 +147,7 @@ def configure_routes(app):
 
             return redirect(url_for('home'))
 
-        return render_template('add_category_activity.html', categories=categories, user=user)
+        return render_template('add_activity.html', categories=categories, user=user)
 
     @app.route('/log_activity', methods=['GET', 'POST'])
     @login_required
