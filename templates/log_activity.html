@@ -23,12 +23,12 @@
         </div>
         <div class="mb-3">
             <label for="timestamp" class="lead">Custom Timestamp</label>
-            <p class="text">This is optional.</label>
+            <p class="text">This is optional.</p>
             <input type="datetime-local" class="form-control" id="timestamp" name="timestamp">
         </div>
         <div class="mb-3">
             <label for="notes" class="lead">Notes</label>
-            <p class="text">This is optional.</label>
+            <p class="text">This is optional.</p>
             <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
         </div>
         <div class="d-flex justify-content-center gap-1">
@@ -38,30 +38,5 @@
     </form>
 </div>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const selectedCategory = document.getElementById('category').value;
-        if (selectedCategory) {
-            fetchActivities(selectedCategory);
-        }
-    });
-
-    async function fetchActivities(categoryId) {
-        const activitySelect = document.getElementById('activity');
-        activitySelect.innerHTML = '<option value="" disabled selected>Loading activities...</option>';
-        activitySelect.disabled = true;
-
-        const response = await fetch(`/get_activities?category_id=${categoryId}`);
-        const activities = await response.json();
-
-        activitySelect.innerHTML = '<option value="" disabled selected>Select an activity</option>';
-        activities.forEach(activity => {
-            const option = document.createElement('option');
-            option.value = activity.id;
-            option.textContent = activity.name;
-            activitySelect.appendChild(option);
-        });
-        activitySelect.disabled = false;
-    }
-</script>
+<script src="{{ url_for('static', filename='js/fetchActivities.js') }}"></script>
 {% endblock %}
