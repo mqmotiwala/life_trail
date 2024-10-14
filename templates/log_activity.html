@@ -1,100 +1,42 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <title>Log Activity</title>
-</head>
-<body>
-    <!-- Navbar with login/logout -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/">Life Trail</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    {% if session['user_id'] %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Welcome, {{ user.username }}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
-                    </li>
-                    {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('login') }}">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('register') }}">Register</a>
-                    </li>
-                    {% endif %}
-                </ul>
-            </div>
+{% extends "base.html" %}
+
+{% block title %}Log Activity{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="display-4 text-center">Log Activity</h1>
+    <form method="post" class="mt-4">
+        <div class="mb-3">
+            <label for="category" class="lead">Select Category:</label>
+            <select name="category" id="category" class="form-select" onchange="fetchActivities(this.value)">
+                <option value="" disabled {% if not selected_category %}selected{% endif %}>Select a category</option>
+                {% for category in categories %}
+                <option value="{{ category.id }}" {% if selected_category and selected_category.id == category.id %}selected{% endif %}>{{ category.name }}</option>
+                {% endfor %}
+            </select>
         </div>
-    </nav>
-
-    <div class="container mt-5">
-        <h1 class="text-center">Log Activity</h1>
-        <form method="post" class="mt-4">
-            <div class="mb-3">
-                <label for="category" class="form-label">Select Category:</label>
-                <select name="category" id="category" class="form-select" onchange="fetchActivities(this.value)">
-                    <option value="" disabled {% if not selected_category %}selected{% endif %}>Select a category</option>
-                    {% for category in categories %}
-                    <option value="{{ category.id }}" {% if selected_category and selected_category.id == category.id %}selected{% endif %}>{{ category.name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="mb-3">
-                <label for="activity" class="form-label">Select Activity:</label>
-                <select name="activity" id="activity" class="form-select" disabled>
-                    <option value="" disabled selected>Select a category first</option>
-                </select>
-            </div>
-            <div class="mb-3">
-                <label for="timestamp" class="form-label">Custom Timestamp (Optional):</label>
-                <input type="datetime-local" class="form-control" id="timestamp" name="timestamp">
-            </div>
-            <div class="mb-3">
-                <label for="notes" class="form-label">Notes (Optional):</label>
-                <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
-            </div>
-
-            <button type="submit" class="btn btn-primary w-100 d-block mx-auto">Log Activity</button>
-        </form>
-        <div class="text-center mt-4">
-            <a href="/" class="btn btn-secondary w-100">Back to Home</a>
+        <div class="mb-3">
+            <label for="activity" class="lead">Select Activity:</label>
+            <select name="activity" id="activity" class="form-select" disabled>
+                <option value="" disabled selected>Select a category first</option>
+            </select>
         </div>
-    </div>
+        <div class="mb-3">
+            <label for="timestamp" class="lead">Custom Timestamp</label>
+            <p class="text">This is optional.</p>
+            <input type="datetime-local" class="form-control" id="timestamp" name="timestamp">
+        </div>
+        <div class="mb-3">
+            <label for="notes" class="lead">Notes</label>
+            <p class="text">This is optional.</p>
+            <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+        </div>
+        <div class="d-flex justify-content-center gap-1">
+            <button type="submit" class="btn btn-primary">Log Activity</button>
+            <a href="/" class="btn btn-secondary">Back to Home</a>
+        </div>
+    </form>
+</div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const selectedCategory = document.getElementById('category').value;
-            if (selectedCategory) {
-                fetchActivities(selectedCategory);
-            }
-        });
-
-        async function fetchActivities(categoryId) {
-            const activitySelect = document.getElementById('activity');
-            activitySelect.innerHTML = '<option value="" disabled selected>Loading activities...</option>';
-            activitySelect.disabled = true;
-
-            const response = await fetch(`/get_activities?category_id=${categoryId}`);
-            const activities = await response.json();
-
-            activitySelect.innerHTML = '<option value="" disabled selected>Select an activity</option>';
-            activities.forEach(activity => {
-                const option = document.createElement('option');
-                option.value = activity.id;
-                option.textContent = activity.name;
-                activitySelect.appendChild(option);
-            });
-            activitySelect.disabled = false;
-        }
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+<script src="{{ url_for('static', filename='js/fetchActivities.js') }}"></script>
+{% endblock %}

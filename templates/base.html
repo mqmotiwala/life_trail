@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <title>{% block title %}Life Trail - Your Activity Tracker{% endblock %}</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            color: #333;
+        }
+        .hero-section {
+            padding: 25px 0;
+            text-align: center;
+        }
+        .action-section {
+            padding: 25px 0;
+        }
+        .action-card {
+            border-radius: 10px;
+            transition: all 0.3s ease-in-out;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+            padding: 20px;
+        }
+        .category-card {
+            border-radius: 10px;
+            transition: all 0.3s ease-in-out;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+            padding: 20px;
+        }
+        .category-card:hover, .action-card:hover {
+            transform: scale(1.05);
+        }
+        footer { padding: 20px 0; color: #333;
+        }
+        .text-primary {
+            color: #385e3c !important;
+            text-align: left;
+        }
+        .btn-unified, .btn-primary {
+            background-color: #385e3c;
+            color: white;
+            border: none;
+        }
+        .btn-unified:hover, .btn-primary:hover {
+            background-color: #263b2b;
+            color: white;
+        }
+        .btn-secondary {
+            background-color: #848f85;
+            color: white;
+            border: none;
+        }
+    </style>
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <!-- Logout Button -->
+    <div class="container-fluid mt-3">
+        {% if session['user_id'] %}
+        <div class="d-flex justify-content-end">
+            <a href="{{ url_for('logout') }}" class="btn btn-secondary">Logout</a>
+        </div>
+        {% endif %}
+    </div>
+
+    {% block content %}{% endblock %}
+
+    <footer class="text-center mt-5">
+        <div class="container">
+            <p>&copy; 2024 Life Trail. Made with ❤️ in Palo Alto.</p>
+        </div>
+        <div class="container mt-3">
+            <a href="https://www.linkedin.com/in/mufaddalmotiwala" class="me-3" target="_blank"><i class="fab fa-linkedin fa-lg"></i></a>
+            <a href="https://www.github.com/mqmotiwala/life_trail" class="me-3" target="_blank"><i class="fab fa-github fa-lg"></i></a>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
