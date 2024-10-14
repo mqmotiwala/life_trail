@@ -34,16 +34,5 @@
     </form>
 </div>
 
-<script>
-    function toggleCategoryInput() {
-        const existingCategory = document.getElementById('existing_category').value;
-        const categoryInput = document.getElementById('category_name');
-        if (existingCategory) {
-            categoryInput.disabled = true;
-            categoryInput.value = "";
-        } else {
-            categoryInput.disabled = false;
-        }
-    }
-</script>
+<script src="{{ url_for('static', filename='js/toggleCategoryInput.js') }}"></script>
 {% endblock %}
