@@ -1,5 +1,7 @@
 document.addEventListener("DOMContentLoaded", function() {
     async function fetchActivities(categoryId) {
+        if (!categoryId) return;
+
         const activitySelect = document.getElementById('activity');
         activitySelect.innerHTML = '<option value="" disabled selected>Loading activities...</option>';
         activitySelect.disabled = true;
@@ -27,4 +29,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Ensure the function is globally accessible for inline event listeners
     window.fetchActivities = fetchActivities;
+
+    // Automatically fetch activities if a category is already selected
+    const selectedCategory = document.getElementById('category').value;
+    if (selectedCategory) {
+        fetchActivities(selectedCategory);
+    }
 });
