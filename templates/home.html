@@ -4,11 +4,13 @@
 
 {% block content %}
 
-<section class="hero-section">
-    <div class="container">
-        <h3 class="display-4 fw-bold">Welcome to Your Life Trail, {{ user.first_name }}</h3>
+<section class="hero-section" style="display: flex; justify-content: center; align-items: center;">
+    <div class="container" style="text-align: center;">
+        <h1 class="display-4 fw-bold text-primary mb-1">Welcome to Your Life Trail, {{ user.first_name }}</h1>
+        <p class="lead text-start mb-1">Track the things that matter to you, like <span id="exampleStepsToTrack"></span>.</p>
     </div>
 </section>
+
 
 <section class="action-section">
     <div class="container">
@@ -68,4 +70,7 @@
         {% endif %}
     </div>
 </section>
+
+<script src="{{ url_for('static', filename='js/updateExampleStepsToTrack.js') }}"></script>
+
 {% endblock %}
