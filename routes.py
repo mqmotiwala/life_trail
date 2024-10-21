@@ -67,7 +67,6 @@ def configure_routes(app):
             user = session_db.query(User).filter_by(username=username).first()
             if user and user.check_password(password):
                 session['user_id'] = user.id
-                flash('Login successful!', 'success')
                 return redirect(url_for('home'))
             else:
                 error_message = 'Invalid username or password!'
@@ -79,7 +78,6 @@ def configure_routes(app):
     def logout():
         logger.info("Logout endpoint called")
         session.pop('user_id', None)
-        flash('Logged out successfully!', 'info')
         return redirect(url_for('login'))
 
     @app.route('/')
