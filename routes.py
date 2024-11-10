@@ -6,7 +6,9 @@ from sqlalchemy.orm import joinedload
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from functools import wraps
+from pushover import Pushover
 
+p = Pushover()
 PREFERRED_TIMEZONE = 'America/Los_Angeles'
 
 # Function to require login for specific routes
@@ -49,6 +51,7 @@ def configure_routes(app):
             session_db.commit()
             session_db.close()
 
+            p.send_notification(f"{first_name} {last_name} just registered on Life Trail!")
             flash('Registration successful! Please log in.', 'success')
             return redirect(url_for('login'))
 
