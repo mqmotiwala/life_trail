@@ -4,7 +4,7 @@ import traceback
 
 import os
 from dotenv import load_dotenv
-from helpers.logger import logger
+from logger import logger
 
 class Pushover:
     HEADERS = {'Content-Type': 'application/json'}
@@ -16,7 +16,7 @@ class Pushover:
         self.user = os.getenv('PUSHOVER_USER')
         self.app_token = os.getenv('PUSHOVER_APP_TOKEN')
         self.log_token = os.getenv('PUSHOVER_LOG_TOKEN')
-        self.app_name = 'Zappy'
+        self.app_name = 'Life Trail'
 
         if not self.user or not self.app_token or not self.log_token:
             logger.error("One or more required environment variables are missing.")
