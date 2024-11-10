@@ -24,6 +24,9 @@ class User(Base):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+    def __repr__(self):
+        return f"{self.first_name} {self.last_name}"
+
 class Category(Base):
     __tablename__ = 'categories'
     id = Column(Integer, primary_key=True, autoincrement=True)

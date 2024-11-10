@@ -6,6 +6,9 @@ import os
 from dotenv import load_dotenv
 from logger import logger
 
+APP_NAME = 'Life Trail'
+MONOSPACE_FONT = 0
+
 class Pushover:
     HEADERS = {'Content-Type': 'application/json'}
     PUSHOVER_URL = 'https://api.pushover.net/1/messages.json'
@@ -16,7 +19,7 @@ class Pushover:
         self.user = os.getenv('PUSHOVER_USER')
         self.app_token = os.getenv('PUSHOVER_APP_TOKEN')
         self.log_token = os.getenv('PUSHOVER_LOG_TOKEN')
-        self.app_name = 'Life Trail'
+        self.app_name = APP_NAME
 
         if not self.user or not self.app_token or not self.log_token:
             logger.error("One or more required environment variables are missing.")
@@ -39,7 +42,7 @@ class Pushover:
             'user': self.user,
             'message': msg,
             'priority': priority,
-            'monospace': 1
+            'monospace': MONOSPACE_FONT
         }
 
         try:

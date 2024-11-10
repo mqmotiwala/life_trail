@@ -51,8 +51,9 @@ def configure_routes(app):
             session_db.commit()
             session_db.close()
 
-            p.send_notification(f"{first_name} {last_name} just registered on Life Trail!")
+            p.send_notification(f"{user} just registered on Life Trail!")
             flash('Registration successful! Please log in.', 'success')
+
             return redirect(url_for('login'))
 
         return render_template('register.html')
@@ -69,8 +70,11 @@ def configure_routes(app):
             user = session_db.query(User).filter_by(username=username).first()
             if user and user.check_password(password):
                 session['user_id'] = user.id
+
+                p.send_notification(f"{user} logged in", priority=-1)
                 return redirect(url_for('home'))
             else:
+                p.send_notification(f"{user} attempted login but could not authenticate successfully.")
                 error_message = 'Invalid username or password!'
 
         session_db.close()
@@ -142,9 +146,11 @@ def configure_routes(app):
 
             session_db.add(new_activity)
             session_db.commit()
-            session_db.close()
 
             logger.info(f"Category '{category_name}' and Activity '{activity_name}' added successfully")
+            p.send_notification(f"{user} created Category '{category_name}' and Activity '{activity_name}'", priority=-1)
+
+            session_db.close()
 
             return redirect(url_for('home'))
 
@@ -193,9 +199,11 @@ def configure_routes(app):
 
             session_db.add(activity_log)
             session_db.commit()
-            session_db.close()
 
             logger.info("Activity logged successfully")
+            p.send_notification(f"{user} logged '{activity.name}' under '{category.name}' category", priority=-1)
+
+            session_db.close()
 
             return redirect(url_for('home'))
 
