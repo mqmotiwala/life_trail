@@ -11,6 +11,8 @@ from pushover import Pushover
 p = Pushover()
 PREFERRED_TIMEZONE = 'America/Los_Angeles'
 
+notif_exempt_users = {'mqmotiwala'}
+
 # Function to require login for specific routes
 def login_required(f):
     @wraps(f)
@@ -51,30 +53,34 @@ def configure_routes(app):
             session_db.commit()
             session_db.close()
 
-            p.send_notification(f"{user} just registered on Life Trail!")
-            flash('Registration successful! Please log in.', 'success')
+            if not user.username in notif_exempt_users:
+                p.send_notification(f"{user} just registered on Life Trail!")
 
+            flash('Registration successful! Please log in.', 'success')
             return redirect(url_for('login'))
 
         return render_template('register.html')
 
     @app.route('/login', methods=['GET', 'POST'])
     def login():
-        logger.info("Login endpoint called")
         session_db = get_db_session()
         error_message = None
         if request.method == 'POST':
             username = request.form['username']
             password = request.form['password']
 
+            logger.info(f"login endpoint called for '{username}'")
             user = session_db.query(User).filter_by(username=username).first()
             if user and user.check_password(password):
                 session['user_id'] = user.id
 
-                p.send_notification(f"{user} logged in", priority=-1)
+                if not user.username in notif_exempt_users:
+                    p.send_notification(f"{user} logged in", priority=-1)
+
                 return redirect(url_for('home'))
             else:
-                p.send_notification(f"{user} attempted login but could not authenticate successfully.")
+                p.send_notification(f"{username} attempted login but could not authenticate successfully.")
+
                 error_message = 'Invalid username or password!'
 
         session_db.close()
@@ -148,7 +154,9 @@ def configure_routes(app):
             session_db.commit()
 
             logger.info(f"Category '{category_name}' and Activity '{activity_name}' added successfully")
-            p.send_notification(f"{user} created Category '{category_name}' and Activity '{activity_name}'", priority=-1)
+
+            if not user.username in notif_exempt_users:
+                p.send_notification(f"{user} created Category '{category_name}' and Activity '{activity_name}'", priority=-1)
 
             session_db.close()
 
@@ -201,7 +209,9 @@ def configure_routes(app):
             session_db.commit()
 
             logger.info("Activity logged successfully")
-            p.send_notification(f"{user} logged '{activity.name}' under '{category.name}' category", priority=-1)
+
+            if not user.username in notif_exempt_users:
+                p.send_notification(f"{user} logged '{activity.name}' under '{category.name}' category", priority=-1)
 
             session_db.close()
 
