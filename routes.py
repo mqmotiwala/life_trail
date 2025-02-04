@@ -51,10 +51,11 @@ def configure_routes(app):
             user.set_password(password)
             session_db.add(user)
             session_db.commit()
-            session_db.close()
 
             if not user.username in notif_exempt_users:
                 p.send_notification(f"{user} just registered on Life Trail!")
+
+            session_db.close()
 
             flash('Registration successful! Please log in.', 'success')
             return redirect(url_for('login'))
