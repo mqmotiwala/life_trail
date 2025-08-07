@@ -1,3 +1,5 @@
+import os
+
 from flask import request, render_template, jsonify, redirect, url_for, session, flash
 from database import get_db_session
 from models import User, Category, Activity, ActivityLog
@@ -7,6 +9,11 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 from functools import wraps
 from pushover import Pushover
+
+app_name = 'Life Trail'
+user = os.getenv('PUSHOVER_USER')
+app_token = os.getenv('PUSHOVER_APP_TOKEN')
+log_token = os.getenv('PUSHOVER_LOG_TOKEN')
 
 p = Pushover()
 PREFERRED_TIMEZONE = 'America/Los_Angeles'

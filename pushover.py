@@ -1,31 +1,27 @@
-import requests
-import datetime
-import traceback
-
 import os
+import requests
+
 from dotenv import load_dotenv
 from logger import logger
 
-APP_NAME = 'Life Trail'
-MONOSPACE_FONT = 0
-
 class Pushover:
+    
     HEADERS = {'Content-Type': 'application/json'}
     PUSHOVER_URL = 'https://api.pushover.net/1/messages.json'
 
-    def __init__(self):
+    def __init__(self, user, app_token, log_token, app_name):
         load_dotenv()
 
-        self.user = os.getenv('PUSHOVER_USER')
-        self.app_token = os.getenv('PUSHOVER_APP_TOKEN')
-        self.log_token = os.getenv('PUSHOVER_LOG_TOKEN')
-        self.app_name = APP_NAME
+        self.user = user
+        self.app_token = app_token
+        self.log_token = log_token
+        self.app_name = app_name
 
         if not self.user or not self.app_token or not self.log_token:
             logger.error("One or more required environment variables are missing.")
             raise ValueError("Missing environment variables for Pushover configuration.")
 
-    def send_notification(self, msg, priority=0, is_log=False):
+    def send_notification(self, msg, priority=0, is_log=False, monospace=0):
         """
         Make an API call to Pushover.
 
@@ -33,7 +29,9 @@ class Pushover:
             msg (str): The message text to be sent via Pushover.
             priority (int): Notification priority, as defined by the Pushover API specification.
             is_log (bool): If True, the notification is sent to the Logs project using PUSHOVER_LOG_TOKEN.
-                        Otherwise, it is logged to the app project using PUSHOVER_APP_TOKEN.
+                Otherwise, it is logged to the app project using PUSHOVER_APP_TOKEN.
+            monospace (enum [0, 1]): Enum options based on Pushover API docs. 
+                If 1, the text is monospaced. Defaults to 0.
         """
 
         params = {
@@ -42,7 +40,7 @@ class Pushover:
             'user': self.user,
             'message': msg,
             'priority': priority,
-            'monospace': MONOSPACE_FONT
+            'monospace': monospace
         }
 
         try:
