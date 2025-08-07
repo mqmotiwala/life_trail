@@ -9,13 +9,15 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 from functools import wraps
 from pushover import Pushover
+from dotenv import load_dotenv
 
-app_name = 'Life Trail'
-user = os.getenv('PUSHOVER_USER')
+load_dotenv()
+
+user_token = os.getenv('PUSHOVER_USER_TOKEN')
 app_token = os.getenv('PUSHOVER_APP_TOKEN')
 log_token = os.getenv('PUSHOVER_LOG_TOKEN')
 
-p = Pushover()
+p = Pushover(user_token=user_token, app_token=app_token, log_token=log_token)
 PREFERRED_TIMEZONE = 'America/Los_Angeles'
 
 notif_exempt_users = {'mqmotiwala'}

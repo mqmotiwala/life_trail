@@ -1,7 +1,4 @@
-import os
 import requests
-
-from dotenv import load_dotenv
 from logger import logger
 
 class Pushover:
@@ -9,24 +6,18 @@ class Pushover:
     HEADERS = {'Content-Type': 'application/json'}
     PUSHOVER_URL = 'https://api.pushover.net/1/messages.json'
 
-    def __init__(self, user, app_token, log_token, app_name):
-        load_dotenv()
-
-        self.user = user
+    def __init__(self, user_token, app_token, log_token):
+        self.user_token = user_token
         self.app_token = app_token
         self.log_token = log_token
-        self.app_name = app_name
 
-        if not self.user or not self.app_token or not self.log_token:
-            logger.error("One or more required environment variables are missing.")
-            raise ValueError("Missing environment variables for Pushover configuration.")
-
-    def send_notification(self, msg, priority=0, is_log=False, monospace=0):
+    def send_notification(self, msg, title=None, priority=0, is_log=False, monospace=0):
         """
         Make an API call to Pushover.
 
         Args:
             msg (str): The message text to be sent via Pushover.
+            title (str): Optionally set the title for the message. If excluded, Pushover API will default to the app's name.
             priority (int): Notification priority, as defined by the Pushover API specification.
             is_log (bool): If True, the notification is sent to the Logs project using PUSHOVER_LOG_TOKEN.
                 Otherwise, it is logged to the app project using PUSHOVER_APP_TOKEN.
@@ -35,9 +26,9 @@ class Pushover:
         """
 
         params = {
-            'title': self.app_name,
+            'title': title,
             'token': self.log_token if is_log else self.app_token,
-            'user': self.user,
+            'user': self.user_token,
             'message': msg,
             'priority': priority,
             'monospace': monospace
@@ -47,4 +38,4 @@ class Pushover:
             requests.post(self.PUSHOVER_URL, json=params, headers=self.HEADERS)
             logger.info(f"Notification sent successfully.")
         except Exception as e:
-            logger.exception("An error occurred while sending a notification to Pushover")
+            logger.exception(f"An error occurred while sending a notification to Pushover: {e}")
