@@ -1,5 +1,4 @@
 import requests
-from logger import logger
 
 class Pushover:
     
@@ -34,8 +33,4 @@ class Pushover:
             'monospace': monospace
         }
 
-        try:
-            requests.post(self.PUSHOVER_URL, json=params, headers=self.HEADERS)
-            logger.info(f"Notification sent successfully.")
-        except Exception as e:
-            logger.exception(f"An error occurred while sending a notification to Pushover: {e}")
+        requests.post(self.PUSHOVER_URL, json=params, headers=self.HEADERS)
